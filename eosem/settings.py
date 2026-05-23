@@ -1,13 +1,16 @@
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # 1. RUTAS BASE
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 2. SEGURIDAD (Configuración de desarrollo)
 SECRET_KEY = 'django-insecure-g%y#^(y3zyfu6z-22gj!89a$*t*ufbi7%03s3z8=h)2=uh=eq0'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # 3. APLICACIONES
 INSTALLED_APPS = [
@@ -23,6 +26,7 @@ INSTALLED_APPS = [
 # 4. MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,11 +66,11 @@ WSGI_APPLICATION = 'eosem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'eosem_db',          # El nombre de la base de datos que creaste en Postgres
-        'USER': 'postgres',        # Tu usuario de Postgres (por defecto suele ser 'postgres')
-        'PASSWORD': 'r123', # La contraseña de tu usuario de Postgres
-        'HOST': 'localhost',         # O la IP de tu servidor de base de datos
-        'PORT': '5432',              # Puerto por defecto de PostgreSQL
+        'NAME': os.environ.get("DB_NAME"),          
+        'USER': os.environ.get("DB_USER"),
+        'PASSWORD': os.environ.get("DB_PASSWORD"),
+        'HOST': os.environ.get("DB_HOST"),
+        'PORT': os.environ.get("DB_PORT"),          
     }
 }
 
@@ -86,6 +90,9 @@ USE_TZ = True
 
 # 9. ARCHIVOS ESTÁTICOS (Imágenes, CSS, JS)
 STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Esta configuración permite que Django encuentre la carpeta static dentro de dashboard
 STATICFILES_DIRS = [
